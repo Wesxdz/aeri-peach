@@ -35,19 +35,19 @@ module WheelMountSlots(wheel_config)
     {
         if (wheel_config != 1)
         {
-        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -12/2, 0]) 
+        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -bracket_start-insert_width, 0]) 
         {
-        cube([mounted_wheel_depth, 5, 1]);
+        cube([mounted_wheel_depth, insert_width, 1]);
         $fn=36;
-        //translate([-1.4, 5-1, .4]) scale(0.1) screw("M6x16");
+        translate([mounted_wheel_depth+1.4, insert_width-1, .4]) scale(0.1) screw("M6x16");
         }
         
         mirror([0, 1, 0])
-        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -12/2, 0]) 
+        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -bracket_start-insert_width, 0]) 
         {
-        cube([mounted_wheel_depth, 5, 1]);
+        cube([mounted_wheel_depth, insert_width, 1]);
         $fn=36;
-        //translate([-1.4, 5-1, .4]) scale(0.1) screw("M6x16");
+        translate([mounted_wheel_depth+1.4, insert_width-1, .4]) scale(0.1) screw("M6x16");
         }
         }
     }
@@ -56,9 +56,9 @@ module WheelMountSlots(wheel_config)
     {
         if (wheel_config == 1)
         {
-        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -12/2, 0]) 
+        translate([-wmb_pio-(i*(2.8+mounted_wheel_depth)), -bracket_start-insert_width, 0]) 
         {
-        cube([mounted_wheel_depth, 5, 1]);
+        cube([mounted_wheel_depth, insert_width, 1]);
         $fn=36;
         //translate([-1.4, 5-1, .4]) scale(0.1) screw("M6x16");
         }
@@ -130,17 +130,8 @@ module WheelPanelPrefab(rotation, radius, cell_size, wall_thickness, thickness, 
                     // In triwheel mode, the front wheel faces directly forward
 
                         if (wheel_config == 1)
-                        {
-                            translate([0, 6.1, 0])
-                            rotate([-90, 0, 0])
-                            SupportPlane(mounted_wheel_depth);
-                            
-                            mirror([0, 1, 0])
-                            translate([0, 6.1, 0])
-                            rotate([-90, 0, 0])
-                            SupportPlane(mounted_wheel_depth);
-                            
-                            //translate([0, 0, -7]) scale(0.1) import("omniball.stl");
+                        {                            
+                            // Use Omniball Brace
                         } else
                         {
                             if (robot_mode) {
@@ -194,8 +185,8 @@ module WheelPanelPrefab(rotation, radius, cell_size, wall_thickness, thickness, 
                 {
                     hull()
                     {
-                    translate([0, 2, 0]) cylinder(4, 0.4, 0.4, $fn=64);
-                    translate([0, -2, 0]) cylinder(4, 0.4, 0.4, $fn=64);
+                    translate([0, 1.5, 0]) cylinder(4, 0.4, 0.4, $fn=64);
+                    translate([0, -1, 0]) cylinder(4, 0.4, 0.4, $fn=64);
                     }
                 }
                 rotate([0, 0, 180]) translate([wmb_pio-0.8, 0.0, panel_thickness]) GearmotorBracketScrewHoles();
@@ -292,7 +283,9 @@ module RestPrefab(rotation, radius, cell_size, wall_thickness, thickness, border
 
 
 
-//rotate([0, -tetra_a, 0])
-//{
+rotate([0, -tetra_a, 0])
+{
+
+}
+
 //WheelPanelPrefab(36, panel_radius, cell_size, wall_thickness, panel_thickness, border_edge, true, color([0, 1, 1, 1]), true, show_rest=false, 2);
-//}

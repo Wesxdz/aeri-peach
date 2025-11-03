@@ -52,7 +52,7 @@ $fn=128;
                 {
                     import ("wheel_panel_1.stl");
                     // WheelPanelPrefab(36, panel_radius, cell_size, wall_thickness, panel_thickness, border_edge, show_cradle_vent, color([0, 1, 1, 1]), true, show_rest=false, 1);
-                    translate([0, 0, -7]) scale(0.1) import("omniball.stl");
+                    //translate([0, 0, -7]) scale(0.1) import("omniball.stl");
                 }
                 }
                 
@@ -101,4 +101,4 @@ Cradle();
 }
 }
 
-//color([0.5, 0.5, 0.5, 0.5]) import("bottom_connectors.stl");
+//color([0.5, 0.5, 0.5, 0.5]) import("bottom_connectors.stl");7Sac

@@ -3,6 +3,7 @@ include <dodecahedroid_config.scad>
 include <gt2_20_pulley.scad>
 include <ball_bearings.scad>
 include <belt_len.scad>
+include <wheel_shield.scad>
 
 // Mounting bracket for wheels
 
@@ -29,7 +30,6 @@ module ScooterWheel(radius)
     {
     difference()
     {
-        color([0, 0, 0, .5])
         hull()
         {
             cylinder(2.4, radius*0.5, radius*0.5);
@@ -45,6 +45,23 @@ module ScooterWheel(radius)
     }
     $fn = 32;
     cylinder(2.4, .3, .3);
+    }
+}
+
+module ScooterWheelCutout(radius)
+{
+    union()
+    {
+    union()
+    {
+        hull()
+        {
+            cylinder(2.4, radius*0.5, radius*0.5);
+            translate([0, 0, 0.0]) beveled_cylinder(2.4, radius);
+        }
+        $fn = 32;
+        cylinder(2.4, 1.1, 1.1);
+    }
     }
 }
 
@@ -114,7 +131,7 @@ module MountBrackets()
 gearmotor_dshaft_mount_cylinder_radius = 0.6;
 panel_overhang = 1.38;
 panel_to_wheel_center = gearmotor_dshaft_mount_cylinder_radius + (C - panel_thickness - panel_overhang);
-module SupportPlane(depth)
+module SupportPlane(depth, wheel_config=2)
 {
 
     perp_insert_form = 
@@ -135,30 +152,24 @@ module SupportPlane(depth)
         {
         union()
         {
-        linear_extrude(depth) Trapezoid(1, 6, panel_to_wheel_center);
-        mirror([1, 0, 0]) linear_extrude(depth) Trapezoid(1, 6, panel_to_wheel_center);
+        linear_extrude(depth) Trapezoid(1, 5.3, panel_to_wheel_center);
+        mirror([1, 0, 0]) linear_extrude(depth) Trapezoid(1, 4, panel_to_wheel_center);
         }
         translate([-12, -0.6, 0.0]) cube([24, 1-0.4, depth]); // Flat intersection
         }
-        // linear_extrude(.1) translate([-3, -2.8, 0]) square([2, 2.8]);
-        
-        // Offset by trapezoidal hull radius to get the nice round
-//        translate([0, -0.0, 0])
         {
         difference()
         {
             linear_extrude(depth) polygon(perp_insert_form);
-            //linear_extrude(depth) translate([1, -2.8-0.5-panel_thickness, 0]) square([2, 2.8+panel_thickness]);
             $fn = 32;
-            translate([1+1, -bracket_height/2-panel_thickness, 1]) scale(0.1) screw("M6x16");
+            translate([bracket_start+1, -bracket_height/2-panel_thickness, 1]) scale(0.1) screw("M6x16");
         }
         
         mirror([1, 0, 0]) difference()
         {
             linear_extrude(depth) polygon(perp_insert_form);
-            //linear_extrude(depth) translate([1, -2.8-0.5-panel_thickness, 0]) square([2, 2.8+panel_thickness]);
             $fn = 32;
-            translate([1+1, -bracket_height/2-panel_thickness, 1]) scale(.1) screw("M6x16");
+            translate([bracket_start+1, -bracket_height/2-panel_thickness, 1]) scale(.1) screw("M6x16");
         }
         
         }
@@ -170,8 +181,15 @@ module SupportPlane(depth)
             {
                 hull()
                 {
-                    translate([2, 0, 0]) cylinder(5, 0.25, 0.25); // M5
-                    translate([-2, 0, 0]) cylinder(5, 0.25, 0.25);
+                    if (wheel_config == 2)
+                    {
+                    translate([1.0, 0, 0]) cylinder(5, 0.25, 0.25); // M5
+                    translate([-1.5, 0, 0]) cylinder(5, 0.25, 0.25);
+                    } else if (wheel_config == 3)
+                    {
+                    translate([1.5, 0, 0]) cylinder(5, 0.25, 0.25); // M5
+                    translate([1.0, 0, 0]) cylinder(5, 0.25, 0.25);
+                    }
                 }
             }
             $fn = 32;
@@ -185,6 +203,8 @@ module SupportPlane(depth)
 
 module MountedWheel(depth=0.5)
 {
+    shield_overlay = true;
+    
     mirror([0, 0, 1]) color([1.0, 0.0, 1.0, 1.0]) translate([0, -2.5, 0.7]) GT2_20_IdlePulley();
     
     mirror([0, 0, 1]) color([1.0, 0.0, 1.0, 1.0]) translate([0, 0, 0]) GT2_20_Pulley();
@@ -199,8 +219,14 @@ module MountedWheel(depth=0.5)
     // BOM 6mm D-shaft (40mm length)
     color([1.0, 0, 0, 1]) translate([0, 0, -2.5]) 
     difference()
-    {
-        cylinder(4.0, 0.3, 0.3);
+    {   
+        if (shield_overlay)
+        {
+            cylinder(6.0, 0.3, 0.3); // Longer D shaft to span to other 626
+        } else
+        {
+            cylinder(4.0, 0.3, 0.3);
+        }
         translate([0.55, 0, 0]) cube([0.6, 0.6, 10.0], true);
     }
     //scale(0.1) screw("M6x45");
@@ -211,9 +237,32 @@ module MountedWheel(depth=0.5)
     // translate([0, 0, .51+.1]) ScooterWheel(3.6);
     // Large wheel
     // 608 bearing builtin spacer
-    ScooterWheel(5.0);
+    translate([0, 0, -0.4]) ScooterWheel(5.0);
     color([1, 1, 1]) translate([0, -panel_to_wheel_center+1, -depth-spacer_depth]) SupportPlane(depth);
     }
+    
+    if (shield_overlay)
+    {
+    
+    difference()
+    {
+    union()
+    {
+    intersection()
+    {
+    translate([-8, -panel_to_wheel_center+1, 0]) cube([16, 3, 3.7]);
+    translate([0, -panel_to_wheel_center+1, -depth-spacer_depth]) SupportPlane(10);
+    }
+        difference()
+        {
+        scale([1, 1, 1]) translate([-2.5, 3.3, 4.3]) rotate([0, 180, 180]) ShieldBrace();
+        translate([-8, -panel_to_wheel_center-4, 0]) cube([16, 5, 10]);
+        }
+    }
+    translate([0, -1.5, 0.8]) scale(1.0) ScooterWheelCutout(5.0);
+    }
+    }
+
 }
 
 module MountedOmniBall(depth=0.5)
@@ -231,8 +280,8 @@ module MountedOmniBall(depth=0.5)
     translate([-7, -panel_to_wheel_center+3, -depth-spacer_depth]) rotate([0, 90, 0]) translate([0, 0, -depth/2]) SupportPlane(depth);
 }
 
-mounted_wheel_depth = 0.8;
-MountedWheel(mounted_wheel_depth);
+//MountedWheel(mounted_wheel_depth);
+
 // MountedOmniBall
 
 //SupportPlane(0.5);

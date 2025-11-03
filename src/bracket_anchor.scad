@@ -6,7 +6,7 @@ include <nutsnbolts/cyl_head_bolt.scad>
 module GearmotorBracket(show_screws=false)
 {
 scale(0.1)
-translate([-7.8, 1, (37.6+2)/2]) rotate([90, 0, 90]) union()
+translate([-7.8+2.8, 1, (37.6+2)/2]) rotate([90, 0, 90]) union()
 { 
 color([0.8, 0.8, 0.8, 1.0]) import("gearmotor_bracket.stl");
 
@@ -30,10 +30,13 @@ module M3Slot()
 module GearmotorBracketScrewHoles()
 {
     $fn=32;
+    translate([0.28, 0, 0])
+    {
     for (i = [0:6])
     {
         translate([-0.84 - 0.64 * i, 3.12/2, 0.0]) M3Slot();
         translate([-0.84 - 0.64 * i, -3.12/2, 0.0]) M3Slot();
+    }
     }
 }
 

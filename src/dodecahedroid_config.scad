@@ -150,9 +150,9 @@ RAM = 128; // ;)
 
 // Mounting bracket for wheels
 bracket_height = 2.8;
-bracket_start = 1.0;
+bracket_start = 3.76/2;
 bracket_width = 2.0;
-insert_width = 5.0;
+insert_width = 2.5;
 insert_partial = insert_width-bracket_width;
 
 // Wheel Mount Panel Insert Offset;
@@ -167,6 +167,8 @@ brass_insert_height = 4/10;
 
 screw_clearance = 0.03;
 m3_rad = 0.15+screw_clearance;
+
+mounted_wheel_depth = 0.8;
 
 module BrassInsert()
 {

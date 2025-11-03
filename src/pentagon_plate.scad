@@ -1,7 +1,7 @@
 include <render_config.scad>
 include <dodecahedroid_config.scad>
 
-module pentagon(size) {
+module Pentagon(size) {
 angle = 360 / 5;
 points = [
   [size * cos(0), size * sin(0)],
@@ -66,10 +66,10 @@ module PentagonPlate(radius, cell_size, wall_thickness, thickness, border_edge, 
         {
         difference() {
         chamfered_pentagon(radius, radius-Z, thickness);
-        linear_extrude(thickness) pentagon(radius-border_edge);
+        linear_extrude(thickness) Pentagon(radius-border_edge);
         }
         difference() {
-        linear_extrude(thickness) pentagon(radius-border_edge);
+        linear_extrude(thickness) Pentagon(radius-border_edge);
         if (vent && !render_fast_iter)
         {
         linear_extrude(thickness) hexagon_grid(radius, cell_size, wall_thickness);
